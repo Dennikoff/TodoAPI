@@ -1,1 +1,2 @@
 bind_addr = ":8080"
+database_url = "postges://denisharke:123@localhost:5432/TodoAPI_dev"
