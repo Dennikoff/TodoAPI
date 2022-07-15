@@ -67,3 +67,9 @@ func TestUser_Validate(t *testing.T) {
 		})
 	}
 }
+
+func TestUser_BeforeCreate(t *testing.T) {
+	u := model.TestUser()
+	assert.NoError(t, u.BeforeCreate())
+	assert.NotEqual(t, u.EncryptedPassword, "")
+}
