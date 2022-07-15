@@ -21,6 +21,8 @@ func Start(config Config) error {
 func newDB(databaseURL string) (*sql.DB, error) {
 	db, err := sql.Open("postgres", databaseURL)
 
+	defer func() { _ = db.Close() }()
+
 	if err != nil {
 		return nil, err
 	}
