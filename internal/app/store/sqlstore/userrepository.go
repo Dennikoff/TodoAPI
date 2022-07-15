@@ -7,7 +7,8 @@ type UserRepository struct {
 }
 
 func (r *UserRepository) Create(u *model.User) error {
-	return r.store.db.QueryRow("insert into users values (default, $1, $2) returning id",
+	return r.store.db.QueryRow(
+		"insert into users values (default, $1, $2) returning id",
 		u.Email, u.EncryptedPassword,
 	).Scan(&u.ID)
 }
