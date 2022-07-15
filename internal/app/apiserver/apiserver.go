@@ -14,6 +14,7 @@ func Start(config Config) error {
 	st := sqlstore.New(db)
 
 	srv := newServer(st)
+	srv.logger.Info("Starting api server")
 	return http.ListenAndServe(config.Bind_addr, srv)
 }
 

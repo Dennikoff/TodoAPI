@@ -1,6 +1,7 @@
 package sqlstore
 
 import "database/sql"
+import _ "github.com/lib/pq"
 
 type Store struct {
 	db *sql.DB

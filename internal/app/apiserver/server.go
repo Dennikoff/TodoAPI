@@ -14,13 +14,25 @@ type server struct {
 }
 
 func newServer(store store.Store) *server {
-	return &server{
+	s := &server{
 		router: mux.NewRouter(),
 		logger: logrus.New(),
 		store:  store,
 	}
+	s.configureRouter()
+	return s
 }
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router.ServeHTTP(w, r)
+}
+
+func (s *server) configureRouter() {
+	s.router.Handle("/hello", s.handleHello())
+}
+
+func (s *server) handleHello() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello"))
+	}
 }
