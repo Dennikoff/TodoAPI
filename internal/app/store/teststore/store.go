@@ -6,7 +6,11 @@ type Store struct {
 	userRepository *UserRepository
 }
 
-func (s *Store) Users() *UserRepository {
+func New() *Store {
+	return &Store{}
+}
+
+func (s *Store) User() *UserRepository {
 	if s.userRepository == nil {
 		s.userRepository = &UserRepository{
 			store: s,
