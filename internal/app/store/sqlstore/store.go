@@ -2,6 +2,7 @@ package sqlstore
 
 import (
 	"database/sql"
+	"github.com/Dennikoff/TodoAPI/internal/app/store"
 	_ "github.com/lib/pq"
 )
 
@@ -16,7 +17,7 @@ func New(db *sql.DB) *Store {
 	}
 }
 
-func (s *Store) User() *UserRepository {
+func (s *Store) User() store.UserRepository {
 	if s.userRepository == nil {
 		s.userRepository = &UserRepository{
 			store: s,
