@@ -12,3 +12,7 @@ func (r *UserRepository) Create(u *model.User) error {
 		u.Email, u.EncryptedPassword,
 	).Scan(&u.ID)
 }
+
+func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
+	return nil, nil
+}

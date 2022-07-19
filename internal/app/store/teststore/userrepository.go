@@ -1,6 +1,9 @@
 package teststore
 
-import "github.com/Dennikoff/TodoAPI/internal/app/model"
+import (
+	"github.com/Dennikoff/TodoAPI/internal/app/model"
+	"github.com/Dennikoff/TodoAPI/internal/app/store"
+)
 
 type UserRepository struct {
 	store *Store
@@ -20,4 +23,12 @@ func (r *UserRepository) Create(u *model.User) error {
 	u.ID = len(r.users)
 
 	return nil
+}
+
+func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
+	user, ok := r.users[email]
+	if !ok {
+		return nil, store.ErrorRecordNotFound
+	}
+	return user, nil
 }
