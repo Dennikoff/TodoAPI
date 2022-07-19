@@ -21,6 +21,10 @@ func (u *User) Validate() error {
 	)
 }
 
+func (u *User) Sanitize() {
+	u.Password = ""
+}
+
 func (u *User) BeforeCreate() error {
 	pas, err := bcrypt.GenerateFromPassword([]byte(u.Password), 4)
 	if err != nil {
