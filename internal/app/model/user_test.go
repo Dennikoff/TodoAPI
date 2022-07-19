@@ -73,3 +73,9 @@ func TestUser_BeforeCreate(t *testing.T) {
 	assert.NoError(t, u.BeforeCreate())
 	assert.NotEqual(t, u.EncryptedPassword, "")
 }
+
+func TestUser_ComparePassword(t *testing.T) {
+	u := model.TestUser()
+	assert.NoError(t, u.BeforeCreate())
+	assert.True(t, u.ComparePassword(model.TestUser().Password))
+}

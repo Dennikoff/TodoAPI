@@ -33,3 +33,10 @@ func (u *User) BeforeCreate() error {
 	u.EncryptedPassword = string(pas)
 	return nil
 }
+
+func (u *User) ComparePassword(pass string) bool {
+	if err := bcrypt.CompareHashAndPassword([]byte(u.EncryptedPassword), []byte(pass)); err != nil {
+		return false
+	}
+	return true
+}
