@@ -31,6 +31,35 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) configureRouter() {
 	s.router.HandleFunc("/create", s.handleUserCreate()).Methods(http.MethodPost)
+	s.router.HandleFunc("/login", s.handleUserLogIn()).Methods(http.MethodPost)
+}
+
+func (s *server) handleUserLogIn() http.HandlerFunc {
+	type request struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+		user := &model.User{
+			Email:             req.Email,
+			EncryptedPassword: req.Password,
+		}
+
+		us, err := s.store.User().FindByEmail(user.Email)
+		if err != nil || !us.ComparePassword(user.EncryptedPassword) {
+			s.error(w, r, http.StatusUnauthorized, store.ErrorRecordNotFound)
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, us)
+
+	}
 }
 
 func (s *server) handleUserCreate() http.HandlerFunc {
