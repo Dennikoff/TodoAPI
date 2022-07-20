@@ -7,6 +7,7 @@ import (
 	"github.com/Dennikoff/TodoAPI/internal/app/model"
 	"github.com/Dennikoff/TodoAPI/internal/app/store"
 	"github.com/google/uuid"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
@@ -51,6 +52,8 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (s *server) configureRouter() {
 	s.router.Use(s.setRequestID)
 	s.router.Use(s.setLogger)
+
+	s.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
 
 	s.router.HandleFunc("/create", s.handleUserCreate()).Methods(http.MethodPost)
 	s.router.HandleFunc("/login", s.handleUserLogIn()).Methods(http.MethodPost)
