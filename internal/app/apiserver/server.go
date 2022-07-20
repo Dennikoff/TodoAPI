@@ -62,6 +62,12 @@ func (s *server) setRequestID(next http.Handler) http.Handler {
 	})
 }
 
+func (s *server) setLogger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	})
+}
+
 func (s *server) authenticateUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, err := s.sessionStore.Get(r, SessionName)
