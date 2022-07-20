@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"time"
 )
 
 type ctxKey uint8
@@ -49,6 +50,7 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) configureRouter() {
 	s.router.Use(s.setRequestID)
+	s.router.Use(s.setLogger)
 
 	s.router.HandleFunc("/create", s.handleUserCreate()).Methods(http.MethodPost)
 	s.router.HandleFunc("/login", s.handleUserLogIn()).Methods(http.MethodPost)
@@ -64,6 +66,20 @@ func (s *server) setRequestID(next http.Handler) http.Handler {
 
 func (s *server) setLogger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger := s.logger.WithFields(logrus.Fields{
+			"bind_addr": r.RemoteAddr,
+			"req_id":    r.Context().Value(ctxKeyReqID),
+		})
+
+		logger.Infof("Start %s %s\n", r.Method, r.RequestURI)
+		start := time.Now()
+		wr := &responseWriter{
+			w,
+			0,
+		}
+		next.ServeHTTP(wr, r)
+
+		logger.Infof("Complete with %d, %s in %v", wr.code, http.StatusText(wr.code), time.Since(start))
 
 	})
 }
