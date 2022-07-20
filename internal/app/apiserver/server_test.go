@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/Dennikoff/TodoAPI/internal/app/model"
 	"github.com/Dennikoff/TodoAPI/internal/app/store/teststore"
+	"github.com/gorilla/sessions"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -12,7 +13,7 @@ import (
 )
 
 func TestServer_HandleUsersCreate(t *testing.T) {
-	s := newServer(teststore.New())
+	s := newServer(teststore.New(), sessions.NewCookieStore([]byte("secret")))
 	testcases := []struct {
 		name       string
 		payload    interface{}
@@ -62,7 +63,7 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 }
 
 func TestServerHandleLogIn(t *testing.T) {
-	s := newServer(teststore.New())
+	s := newServer(teststore.New(), sessions.NewCookieStore([]byte("secret")))
 	s.store.User().Create(&model.User{
 		Email:    "d.harke@yandex.ru",
 		Password: "12345678",

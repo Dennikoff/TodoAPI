@@ -16,7 +16,6 @@ func Start(config Config) error {
 	st := sqlstore.New(db)
 
 	sessionStore := sessions.NewCookieStore([]byte(config.SessionKey))
-
 	srv := newServer(st, sessionStore)
 	srv.logger.Info("Starting api server")
 	return http.ListenAndServe(config.Bind_addr, srv)

@@ -1,9 +1,12 @@
 package apiserver
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"github.com/Dennikoff/TodoAPI/internal/app/model"
 	"github.com/Dennikoff/TodoAPI/internal/app/store"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
@@ -12,9 +15,14 @@ import (
 
 type ctxKey uint8
 
+var (
+	errorUserNotAutheticate = errors.New("user is not authenticate")
+)
+
 const (
-	sessionName        = "Authorized"
+	SessionName        = "Authorized"
 	ctxKeyUser  ctxKey = iota
+	ctxKeyReqID ctxKey = iota
 )
 
 type server struct {
@@ -40,8 +48,43 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) configureRouter() {
+	s.router.Use(s.setRequestID)
+
 	s.router.HandleFunc("/create", s.handleUserCreate()).Methods(http.MethodPost)
 	s.router.HandleFunc("/login", s.handleUserLogIn()).Methods(http.MethodPost)
+}
+
+func (s *server) setRequestID(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		id := uuid.New().String()
+		w.Header().Set("X-Request-ID", id)
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxKeyReqID, id)))
+	})
+}
+
+func (s *server) authenticateUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, err := s.sessionStore.Get(r, SessionName)
+		if err != nil {
+			s.error(w, r, http.StatusInternalServerError, err)
+			return
+		}
+
+		id, ok := session.Values["user_id"]
+
+		if !ok {
+			s.error(w, r, http.StatusUnauthorized, errorUserNotAutheticate)
+			return
+		}
+
+		user, err := s.store.User().FindByID(id.(int))
+		if err != nil {
+			s.error(w, r, http.StatusUnauthorized, errorUserNotAutheticate)
+			return
+		}
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxKeyUser, user)))
+
+	})
 }
 
 func (s *server) handleUserLogIn() http.HandlerFunc {
@@ -67,9 +110,9 @@ func (s *server) handleUserLogIn() http.HandlerFunc {
 			return
 		}
 
-		sessionStore, err := s.sessionStore.Get(r, sessionName)
+		sessionStore, err := s.sessionStore.Get(r, SessionName)
 		if err != nil {
-			s.error(w, r, http.StatusInternalServerError, err)
+			s.error(w, r, http.StatusInsufficientStorage, err)
 			return
 		}
 
