@@ -3,6 +3,7 @@ package apiserver
 import (
 	"database/sql"
 	"github.com/Dennikoff/TodoAPI/internal/app/store/sqlstore"
+	"github.com/gorilla/sessions"
 	"net/http"
 )
 
@@ -11,17 +12,17 @@ func Start(config Config) error {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 	st := sqlstore.New(db)
 
-	srv := newServer(st)
+	sessionStore := sessions.NewCookieStore([]byte(config.SessionKey))
+	srv := newServer(st, sessionStore)
 	srv.logger.Info("Starting api server")
 	return http.ListenAndServe(config.Bind_addr, srv)
 }
 
 func newDB(databaseURL string) (*sql.DB, error) {
 	db, err := sql.Open("postgres", databaseURL)
-
-	defer func() { _ = db.Close() }()
 
 	if err != nil {
 		return nil, err

@@ -1,3 +1,4 @@
 bind_addr = ":8080"
 log_level = "debug"
 database_url = "host=localhost dbname=todoapi_dev password=123 sslmode=disable"
+session_key = "bfhdsvjbgoibjivnug8g29ub3u2y35732861u2h3tt982t7h209g2h1700293h0u923bt8y2gt"
