@@ -54,6 +54,10 @@ func (s *server) configureRouter() {
 
 	s.router.HandleFunc("/create", s.handleUserCreate()).Methods(http.MethodPost)
 	s.router.HandleFunc("/login", s.handleUserLogIn()).Methods(http.MethodPost)
+
+	private := s.router.PathPrefix("/private").Subrouter()
+	private.Use(s.authenticateUser)
+	private.HandleFunc("/whoami", s.handleWhoAmI()).Methods(http.MethodGet)
 }
 
 func (s *server) setRequestID(next http.Handler) http.Handler {
@@ -62,6 +66,12 @@ func (s *server) setRequestID(next http.Handler) http.Handler {
 		w.Header().Set("X-Request-ID", id)
 		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxKeyReqID, id)))
 	})
+}
+
+func (s *server) handleWhoAmI() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		s.respond(w, r, http.StatusOK, r.Context().Value(ctxKeyUser).(*model.User))
+	}
 }
 
 func (s *server) setLogger(next http.Handler) http.Handler {
