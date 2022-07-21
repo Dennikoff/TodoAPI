@@ -62,6 +62,18 @@ func (s *server) configureRouter() {
 	private.Use(s.authenticateUser)
 	private.HandleFunc("/whoami", s.handleWhoAmI()).Methods(http.MethodGet)
 	private.HandleFunc("/create", s.handleCreateTodo()).Methods(http.MethodPost)
+	private.HandleFunc("/get", s.handleGetTodos()).Methods(http.MethodGet)
+}
+
+func (s *server) handleGetTodos() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		todos, err := s.store.Todo().FindByUserID(r.Context().Value(ctxKeyUser).(*model.User).ID)
+		if err != nil {
+			s.error(w, r, http.StatusInternalServerError, err)
+			return
+		}
+		s.respond(w, r, http.StatusOK, todos)
+	}
 }
 
 func (s *server) handleCreateTodo() http.HandlerFunc {
