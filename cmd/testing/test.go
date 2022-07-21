@@ -7,5 +7,5 @@ import (
 
 func main() {
 	u := model.User{}
-	fmt.Println(u.Email, u.EncryptedPassword, u.Password, u.ID, u.TodoId)
+	fmt.Println(u.Email, u.EncryptedPassword, u.Password, u.ID)
 }
