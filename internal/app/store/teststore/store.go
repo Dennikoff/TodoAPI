@@ -7,6 +7,7 @@ import (
 
 type Store struct {
 	userRepository *UserRepository
+	todoRepository *TodoRepository
 }
 
 func New() *Store {
@@ -21,4 +22,14 @@ func (s *Store) User() store.UserRepository {
 		}
 	}
 	return s.userRepository
+}
+
+func (s *Store) Todo() store.TodoRepository {
+	if s.todoRepository == nil {
+		s.todoRepository = &TodoRepository{
+			store: s,
+			todo:  make([]*model.Todo, 0),
+		}
+	}
+	return s.todoRepository
 }
