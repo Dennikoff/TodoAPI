@@ -15,5 +15,11 @@ func (r *TodoRepository) Create(todo *model.Todo) error {
 }
 
 func (r *TodoRepository) FindByUserID(id int) ([]*model.Todo, error) {
-	return nil, nil
+	todos := make([]*model.Todo, 0, 2)
+	for _, todo := range r.todo {
+		if todo.UserId == id {
+			todos = append(todos, todo)
+		}
+	}
+	return todos, nil
 }
