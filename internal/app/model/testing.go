@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 func TestUser() *User {
 	return &User{
 		Email:    "user@example.org",
@@ -11,8 +9,7 @@ func TestUser() *User {
 
 func TestTodo() *Todo {
 	return &Todo{
-		Header:      "Test Header",
-		Text:        "Test Text",
-		CreatedDate: time.Now(),
+		Header: "Test Header",
+		Text:   "Test Text",
 	}
 }
