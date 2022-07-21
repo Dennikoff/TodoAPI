@@ -61,6 +61,31 @@ func (s *server) configureRouter() {
 	private := s.router.PathPrefix("/private").Subrouter()
 	private.Use(s.authenticateUser)
 	private.HandleFunc("/whoami", s.handleWhoAmI()).Methods(http.MethodGet)
+	private.HandleFunc("/create", s.handleCreateTodo()).Methods(http.MethodPost)
+}
+
+func (s *server) handleCreateTodo() http.HandlerFunc {
+	type request struct {
+		Header string `json:"header"`
+		Text   string `json:"text"`
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+			return
+		}
+		todo := &model.Todo{
+			Header: req.Header,
+			Text:   req.Text,
+		}
+		todo.UserId = r.Context().Value(ctxKeyUser).(*model.User).ID
+		if err := s.store.Todo().Create(todo); err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+			return
+		}
+		s.respond(w, r, http.StatusCreated, todo)
+	}
 }
 
 func (s *server) setRequestID(next http.Handler) http.Handler {

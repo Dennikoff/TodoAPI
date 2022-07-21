@@ -10,6 +10,9 @@ import (
 func TestTodoRepository_Create(t *testing.T) {
 	st := teststore.New()
 	todo := model.TestTodo()
+	user := model.TestUser()
+	assert.NoError(t, st.User().Create(user))
+	todo.UserId = user.ID
 	assert.NoError(t, st.Todo().Create(todo))
 	assert.NotEqual(t, 0, todo.ID)
 }
