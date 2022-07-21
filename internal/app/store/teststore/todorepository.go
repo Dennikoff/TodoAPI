@@ -13,3 +13,7 @@ func (r *TodoRepository) Create(todo *model.Todo) error {
 	todo.ID = len(r.todo)
 	return nil
 }
+
+func (r *TodoRepository) FindByUserID(id int) ([]*model.Todo, error) {
+	return nil, nil
+}
