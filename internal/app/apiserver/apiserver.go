@@ -18,6 +18,10 @@ func Start(config Config) error {
 	sessionStore := sessions.NewCookieStore([]byte(config.SessionKey))
 	srv := newServer(st, sessionStore)
 	srv.logger.Info("Starting api server")
+	//todos, _ := srv.store.Todo().FindByUserID(1)
+	//for _, todo := range todos {
+	//	fmt.Println(todo)
+	//}
 	return http.ListenAndServe(config.Bind_addr, srv)
 }
 

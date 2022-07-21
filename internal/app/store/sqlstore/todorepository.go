@@ -1,7 +1,6 @@
 package sqlstore
 
 import (
-	"fmt"
 	"github.com/Dennikoff/TodoAPI/internal/app/model"
 	"log"
 )
@@ -17,20 +16,21 @@ func (r *TodoRepository) Create(todo *model.Todo) error {
 	).Scan(&todo.ID)
 }
 
-func (r *TodoRepository) FindByUserID(id int) error {
+func (r *TodoRepository) FindByUserID(id int) ([]*model.Todo, error) {
 	todo := &model.Todo{}
 	rows, err := r.store.db.Query(
 		"SELECT id, user_id, header, text, created_date FROM todo WHERE user_id = $1", id,
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
+	todos := make([]*model.Todo, 0, 4)
 	for rows.Next() {
 		err := rows.Scan(&todo.ID, &todo.UserId, &todo.Header, &todo.Text, &todo.CreatedDate)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(todo)
+		todos = append(todos, todo)
 	}
-	return nil
+	return todos, nil
 }
