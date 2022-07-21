@@ -17,7 +17,6 @@ func (r *TodoRepository) Create(todo *model.Todo) error {
 }
 
 func (r *TodoRepository) FindByUserID(id int) ([]*model.Todo, error) {
-	todo := &model.Todo{}
 	rows, err := r.store.db.Query(
 		"SELECT id, user_id, header, text, created_date FROM todo WHERE user_id = $1", id,
 	)
@@ -26,6 +25,7 @@ func (r *TodoRepository) FindByUserID(id int) ([]*model.Todo, error) {
 	}
 	todos := make([]*model.Todo, 0, 4)
 	for rows.Next() {
+		todo := &model.Todo{}
 		err := rows.Scan(&todo.ID, &todo.UserId, &todo.Header, &todo.Text, &todo.CreatedDate)
 		if err != nil {
 			log.Fatal(err)
