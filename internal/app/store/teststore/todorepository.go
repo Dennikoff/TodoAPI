@@ -21,6 +21,5 @@ func (r *TodoRepository) FindByUserID(id int) ([]*model.Todo, error) {
 			todos = append(todos, todo)
 		}
 	}
-
 	return todos, nil
 }
