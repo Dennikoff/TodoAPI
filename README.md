@@ -27,9 +27,75 @@
 
 ## Network<a name="Network"></a>
 
+Todo API work on localhost:8080.<br/>
 Postman web service was used for network testing.
-Todo API
+Todo API provide some features:<br/>
+### Create User
+You can create new user:
 
+`POST localhost:8080/create`
+
+Request Body should have such json structure:
+
+```
+{
+   "email": "your@email.org",
+   "password": "your_password"
+} 
+```
+
+If you type incorrect data (youremail.com) validation will return error
+
+### Log In
+You can Log In to the system:
+
+`POST localhost:8080/login`
+
+Request Body should have the same json structure as create:
+
+```
+{
+   "email": "your@email.org",
+   "password": "your_password"
+} 
+```
+After that you will get ***Set-Cookie*** Header and your 
+browser will set session cookie. And with this cookie 
+you will have permission to 
+
+`localhost:8080/private`
+
+### Who am I
+You can easily find out what user logged in:
+
+`GET localhost:8080/private/whoami`
+
+The User taken from **request.Context**
+
+### Create TODO
+You can create todo:
+
+`POST localhost:8080/private/create`
+
+Request Body should have such json structure:
+
+```
+{
+   "header": "Your Header",
+   "text": "Your text"
+} 
+```
+
+### Get TODOs
+You can get your tasks:
+
+`GET localhost:8080/private/get`
+
+This request returns slice of todos:
+```
+{{"id": int, "user_id": int, "header": "string",
+  "text": "string", "created_date": time.Time}, ... }
+```
 ## Database<a name="Database"></a>
 
 
