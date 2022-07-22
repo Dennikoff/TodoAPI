@@ -44,7 +44,8 @@ Request Body should have such json structure:
 } 
 ```
 
-If you type incorrect data (youremail.com) validation will return error
+If you type incorrect data (for example: "youremail.com") 
+validation will return error
 
 ### Log In
 You can Log In to the system:
@@ -97,6 +98,23 @@ This request returns slice of todos:
   "text": "string", "created_date": time.Time}, ... }
 ```
 ## Database<a name="Database"></a>
+ 
+For Data storage I use PostgreSQL. I have two tables:
+
+#### User
+
+|  id   |   email   |  password (encrypted)  |
+|:-----:|:---------:|:----------------------:|
+|  int  |  varchar  |        varchar         |
+
+#### Todo
+
+|  id   |  user_id  |  header   |  text  |  created_date  |
+|:-----:|:---------:|:---------:|:------:|:--------------:|
+|  int  |    int    |  varchar  |  text  |      date      |
+
+More information you can find in [Sample](./sample)
+
 
 
 
