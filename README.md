@@ -28,7 +28,7 @@
 ## Network<a name="Network"></a>
 
 Postman web service was used for network testing.
-Todo API  
+Todo API
 
 ## Database<a name="Database"></a>
 
