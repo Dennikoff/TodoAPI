@@ -94,8 +94,7 @@ You can get your tasks:
 
 This request returns slice of todos:
 ```
-{{"id": int, "user_id": int, "header": "string",
-  "text": "string", "created_date": time.Time}, ... }
+{{"id": int, "user_id": int, "header": "string", "text": "string", "created_date": time.Time}, ... }
 ```
 ## Database<a name="Database"></a>
  
